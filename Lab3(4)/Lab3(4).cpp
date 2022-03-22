@@ -36,7 +36,7 @@ void gist(int x, int y, HDC& hdc, int startx, int starty) {
     }
 }
 void Smoothing(int x, int y, HDC& hdc, int startx, int starty, int movex, int movey ) {
-    COLORREF color, color1, color2;
+    COLORREF color;
     //for (int c = 0; c < y; c++) {
     //    int R = 0, G = 0, B = 0;
     //    for (int k = -1; k < 1; k++) {
@@ -370,8 +370,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             G = GetGValue(color);
           
             B = GetBValue(color) ;
-            gist(weight, height, hdc, 0, 0);
-            gist(weight, height, hdc, 100 + weight, 0);
+         /*   gist(weight, height, hdc, 0, 0);
+            gist(weight, height, hdc, 100 + weight, 0);*/
+            for (int x = 0; x < weight; x++)
+                for (int y = 0; y < height; y++) {
+                    color = GetPixel(memdc, x, y);
+                    R = (GetRValue(color) + 50);
+                    if (R > 255) R = 255;
+                    G = (GetGValue(color) +50);
+                    if (G > 255) G = 255;
+                    B = (GetBValue(color) +50);
+                    if (B > 255) B = 255;
+                    color = RGB(R, G, B);
+                    SetPixel(hdc, x + (weight + 100)+weight + 100, y, color);
+                }
+            gist(weight, height, hdc, (weight + 100) + weight + 100, 0);
 
             Smoothing(weight,height,hdc,0, 0, 0, 250);
              gist(weight-2, height-2, hdc, 0, 250);
@@ -384,6 +397,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             gist(weight - 6, height - 6, hdc, 0, 500);
             Smoothing5(weight-4, height-4, hdc, 0, 500, weight+ 100, 500);
             gist(weight - 12, height - 12, hdc, weight + 100, 500);
+            Smoothing5(weight - 8, height - 8, hdc, 0, 500, weight + 100 + weight + 100, 500);
+            gist(weight - 18, height - 18, hdc, weight + 100 + weight + 100, 500);
+            Sleep(50000);
             // TODO: Добавьте сюда любой код прорисовки, использующий HDC...
             EndPaint(hWnd, &ps);
         }
